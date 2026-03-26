@@ -10,22 +10,27 @@ class CharacterListState {
   final AsyncValue<List<Character>> characters;
   final bool hasMore;
   final bool isLoadingMore;
+  final String? searchQuery;
 
   CharacterListState({
     required this.characters,
     this.hasMore = true,
     this.isLoadingMore = false,
+    this.searchQuery,
   });
 
   CharacterListState copyWith({
     AsyncValue<List<Character>>? characters,
     bool? hasMore,
     bool? isLoadingMore,
+    String? searchQuery,
+    bool clearSearch = false,
   }) {
     return CharacterListState(
       characters: characters ?? this.characters,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      searchQuery: clearSearch ? null : (searchQuery ?? this.searchQuery),
     );
   }
 }
@@ -43,7 +48,7 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
   Future<void> fetchInitial() async {
     state = state.copyWith(characters: const AsyncValue.loading());
     try {
-      final fetchedData = await _fetchCharactersData(1);
+      final fetchedData = await _fetchCharactersData(1, state.searchQuery);
       _currentPage = 1;
       state = state.copyWith(
         characters: AsyncValue.data(fetchedData.characters),
@@ -54,13 +59,21 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     }
   }
 
+  Future<void> search(String query) async {
+    state = state.copyWith(
+      searchQuery: query.isEmpty ? null : query,
+      clearSearch: query.isEmpty,
+    );
+    await fetchInitial();
+  }
+
   Future<void> fetchNextPage() async {
     if (state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
     try {
       final nextPage = _currentPage + 1;
-      final fetchedData = await _fetchCharactersData(nextPage);
+      final fetchedData = await _fetchCharactersData(nextPage, state.searchQuery);
 
       final currentValue = state.characters.asData?.value ?? [];
       final existingIds = currentValue.map((c) => c.id).toSet();
@@ -77,26 +90,32 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     }
   }
 
-  Future<({List<Character> characters, bool hasMore})> _fetchCharactersData(int page) async {
+  Future<({List<Character> characters, bool hasMore})> _fetchCharactersData(int page, String? name) async {
     final apiClient = ref.read(apiClientProvider);
     try {
-      final data = await apiClient.fetchCharacters(page: page);
+      final data = await apiClient.fetchCharacters(page: page, name: name);
       final List results = data['results'];
       final characters = results.map((json) => Character.fromJson(json)).toList();
 
-      await SqfliteHelper.instance.saveCharacters(characters, page);
+      // Only cache full list results, not filtered results (to avoid cache pollution or deal with it later)
+      if (name == null || name.isEmpty) {
+        await SqfliteHelper.instance.saveCharacters(characters, page);
+      }
 
       return (
         characters: characters,
         hasMore: data['info']['next'] != null,
       );
     } catch (e) {
-      final cachedCharacters = await SqfliteHelper.instance.getCachedCharacters(page: page);
-      if (cachedCharacters.isNotEmpty) {
-        return (
-          characters: cachedCharacters,
-          hasMore: true,
-        );
+      // For search, we might not have cache. For full list, we do.
+      if (name == null || name.isEmpty) {
+        final cachedCharacters = await SqfliteHelper.instance.getCachedCharacters(page: page);
+        if (cachedCharacters.isNotEmpty) {
+          return (
+            characters: cachedCharacters,
+            hasMore: true,
+          );
+        }
       }
       rethrow;
     }

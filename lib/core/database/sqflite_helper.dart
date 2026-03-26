@@ -176,6 +176,15 @@ class SqfliteHelper {
     );
   }
 
+  Future<void> deleteLocalEdit(int id) async {
+    final db = await instance.database;
+    await db.delete(
+      'local_edits',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<Map<int, Map<String, dynamic>>> getAllLocalEdits() async {
     final db = await instance.database;
     final result = await db.query('local_edits');

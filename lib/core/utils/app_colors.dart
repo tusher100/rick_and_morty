@@ -27,15 +27,5 @@ class AppColors {
   static final Color border = Colors.grey[200]!;
   static final Color divider = Colors.grey[300]!;
 
-  // Utility
-  static Color withOpacity(Color color, double opacity) {
-    try {
-      // ignore: deprecated_member_use
-      return color.withValues(alpha: opacity);
-    } catch (_) {
-      return color.withOpacity(opacity);
-    }
-  }
-
   static Color shadowColor = Colors.black.withOpacity(0.08);
 }

@@ -4,15 +4,25 @@ import 'package:http/http.dart' as http;
 class ApiClient {
   final String _baseUrl = 'https://rickandmortyapi.com/api/';
 
-  Future<Map<String, dynamic>> fetchCharacters({int page = 1}) async {
+  Future<Map<String, dynamic>> fetchCharacters({int page = 1, String? name}) async {
     try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}character?page=$page'),
-      );
+      final queryParameters = {
+        'page': page.toString(),
+        if (name != null && name.isNotEmpty) 'name': name,
+      };
+      
+      final uri = Uri.parse('${_baseUrl}character').replace(queryParameters: queryParameters);
+      
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
-        // http returns a string body, so you must decode it manually
         return json.decode(response.body);
+      } else if (response.statusCode == 404) {
+        // API returns 404 when no characters match the filter
+        return {
+          'info': {'count': 0, 'pages': 0, 'next': null, 'prev': null},
+          'results': []
+        };
       } else {
         throw Exception('Failed to load characters: ${response.statusCode}');
       }

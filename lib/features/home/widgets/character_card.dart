@@ -15,18 +15,14 @@ class CharacterCard extends HookConsumerWidget {
   final Character character;
   final VoidCallback? onTap;
 
-  const CharacterCard({
-    super.key,
-    required this.character,
-    this.onTap,
-  });
+  const CharacterCard({super.key, required this.character, this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retryKey = useState(0);
     final isFavorite = ref.watch(isFavoriteProvider(character.id));
     final localEdits = ref.watch(characterEditProvider(character.id));
-    
+
     final displayCharacter = character.mergeWithEdits(localEdits);
 
     return AppCard(
@@ -44,7 +40,9 @@ class CharacterCard extends HookConsumerWidget {
                   child: Stack(
                     children: [
                       CachedNetworkImage(
-                        key: ValueKey('${displayCharacter.image}_${retryKey.value}'),
+                        key: ValueKey(
+                          '${displayCharacter.image}_${retryKey.value}',
+                        ),
                         imageUrl: displayCharacter.image,
                         fit: BoxFit.cover,
                         width: double.infinity,
@@ -58,9 +56,12 @@ class CharacterCard extends HookConsumerWidget {
                         errorWidget: (context, url, error) {
                           if (retryKey.value < 3) {
                             // Exponential backoff for 429s
-                            Future.delayed(Duration(seconds: (retryKey.value + 1) * 2), () {
-                              if (context.mounted) retryKey.value++;
-                            });
+                            Future.delayed(
+                              Duration(seconds: (retryKey.value + 1) * 2),
+                              () {
+                                if (context.mounted) retryKey.value++;
+                              },
+                            );
                           }
 
                           return GestureDetector(
@@ -70,10 +71,15 @@ class CharacterCard extends HookConsumerWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.refresh, color: AppColors.secondary),
+                                  Icon(
+                                    Icons.refresh,
+                                    color: AppColors.secondary,
+                                  ),
                                   SizedBox(height: 4.h),
                                   AppText.bodySmall(
-                                    retryKey.value < 2 ? 'Retrying...' : 'Tap to retry',
+                                    retryKey.value < 2
+                                        ? 'Retrying...'
+                                        : 'Tap to retry',
                                   ),
                                 ],
                               ),
@@ -88,10 +94,16 @@ class CharacterCard extends HookConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppColors.withOpacity(AppColors.cardBackground, 0.8),
+                              color: AppColors.cardBackground.withValues(
+                                alpha: 0.8,
+                              ),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.favorite, color: AppColors.danger, size: 16.w),
+                            child: Icon(
+                              Icons.favorite,
+                              color: AppColors.danger,
+                              size: 16.w,
+                            ),
                           ),
                         ),
                     ],
@@ -101,7 +113,10 @@ class CharacterCard extends HookConsumerWidget {
               Expanded(
                 flex: 2,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 8.h,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,11 +132,15 @@ class CharacterCard extends HookConsumerWidget {
                       SizedBox(height: 4.h),
                       Row(
                         children: [
-                          StatusIndicator(status: displayCharacter.status, size: 7.w),
+                          StatusIndicator(
+                            status: displayCharacter.status,
+                            size: 7.w,
+                          ),
                           SizedBox(width: 4.w),
                           Expanded(
                             child: AppText(
-                              text: '${displayCharacter.status} • ${displayCharacter.species}',
+                              text:
+                                  '${displayCharacter.status} • ${displayCharacter.species}',
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textSecondary,

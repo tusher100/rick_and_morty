@@ -25,6 +25,10 @@ class EditCharacterScreen extends HookConsumerWidget {
     final originController = useTextEditingController(text: character.originName);
     final locationController = useTextEditingController(text: character.locationName);
 
+    // Watch edits to know if we exhibit override behavior
+    final localEdits = ref.watch(characterEditProvider(character.id));
+    final hasEdits = localEdits != null;
+
     return Scaffold(
       backgroundColor: AppColors.cardBackground,
       appBar: AppBar(
@@ -33,6 +37,16 @@ class EditCharacterScreen extends HookConsumerWidget {
         elevation: 0,
         leading: BackButton(color: AppColors.textPrimary),
         actions: [
+          if (hasEdits)
+            TextButton(
+              onPressed: () {
+                _showResetDialog(context, ref);
+              },
+              child: AppText.bodyMedium(
+                'Reset',
+                color: AppColors.danger,
+              ),
+            ),
           TextButton(
             onPressed: () async {
               if (formKey.currentState!.validate()) {
@@ -83,6 +97,37 @@ class EditCharacterScreen extends HookConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showResetDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: AppText.h3('Reset Data?'),
+        content: AppText.bodyMedium(
+          'This will clear your local edits and restore the character to its original API data.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: AppText.bodyMedium('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ref.read(localEditsProvider.notifier).deleteEdit(character.id);
+              if (context.mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Close edit screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Restored to API data!')),
+                );
+              }
+            },
+            child: AppText.bodyMedium('Reset', color: AppColors.danger),
+          ),
+        ],
       ),
     );
   }

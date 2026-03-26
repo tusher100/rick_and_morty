@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,6 +19,9 @@ class HomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(characterListProvider);
     final scrollController = useScrollController();
+    final isSearchExpanded = useState(false);
+    final searchController = useTextEditingController();
+    final debouncer = useRef<Timer?>(null);
 
     useEffect(() {
       void scrollListener() {
@@ -33,29 +38,71 @@ class HomeScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: AppText.h2('Rick & Morty'),
+        title: !isSearchExpanded.value 
+          ? AppText.h2('Rick & Morty')
+          : TextField(
+              controller: searchController,
+              autofocus: true,
+              style: AppText.getStyle(fontSize: 16, color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: 'Search characters...',
+                hintStyle: AppText.getStyle(fontSize: 16, color: AppColors.textSecondary),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                debouncer.value?.cancel();
+                debouncer.value = Timer(const Duration(milliseconds: 500), () {
+                  ref.read(characterListProvider.notifier).search(value);
+                });
+              },
+            ),
         backgroundColor: AppColors.cardBackground,
         centerTitle: false,
         elevation: 0.5,
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 12.w),
-            child: IconButton(
-              icon: Icon(Icons.favorite_outline, size: 24.w, color: AppColors.textPrimary),
+        leading: isSearchExpanded.value 
+          ? IconButton(
+              icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FavoritesScreen()),
-                );
+                isSearchExpanded.value = false;
+                searchController.clear();
+                ref.read(characterListProvider.notifier).search('');
               },
+            )
+          : null,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isSearchExpanded.value ? Icons.close : Icons.search, 
+              size: 24.w, 
+              color: AppColors.textPrimary
             ),
-          )
+            onPressed: () {
+              if (isSearchExpanded.value) {
+                searchController.clear();
+                ref.read(characterListProvider.notifier).search('');
+              }
+              isSearchExpanded.value = !isSearchExpanded.value;
+            },
+          ),
+          if (!isSearchExpanded.value)
+            Padding(
+              padding: EdgeInsets.only(right: 12.w),
+              child: IconButton(
+                icon: Icon(Icons.favorite_outline, size: 24.w, color: AppColors.textPrimary),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+                  );
+                },
+              ),
+            )
         ],
       ),
       body: state.characters.when(
         data: (characters) {
           if (characters.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmptyState(state.searchQuery != null);
           }
           return RefreshIndicator(
             color: AppColors.textPrimary,
@@ -121,20 +168,28 @@ class HomeScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool isSearch) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Opacity(
             opacity: 0.5,
-            child: Icon(Icons.search_off, size: 80.w, color: AppColors.textSecondary),
+            child: Icon(
+              isSearch ? Icons.search_off : Icons.group_off, 
+              size: 80.w, 
+              color: AppColors.textSecondary
+            ),
           ),
           SizedBox(height: 16.h),
           AppText.h3(
-            'No characters found',
+            isSearch ? 'No matching characters' : 'No characters found',
             color: AppColors.textSecondary,
           ),
+          if (isSearch) ...[
+            SizedBox(height: 8.h),
+            AppText.bodySmall('Try searching for something else'),
+          ],
         ],
       ),
     );

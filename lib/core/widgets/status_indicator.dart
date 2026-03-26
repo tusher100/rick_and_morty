@@ -32,7 +32,7 @@ class StatusIndicator extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.withOpacity(color, 0.3),
+            color: AppColors.statusUnknown.withValues(alpha: 0.3),
             blurRadius: 6,
             spreadRadius: 2,
           ),

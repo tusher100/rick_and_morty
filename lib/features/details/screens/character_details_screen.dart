@@ -54,7 +54,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                 leading: Padding(
                   padding: EdgeInsets.all(8.w),
                   child: CircleAvatar(
-                    backgroundColor: AppColors.withOpacity(AppColors.cardBackground, 0.5),
+                    backgroundColor: AppColors.cardBackground.withValues(alpha: 0.5),
                     child: BackButton(color: AppColors.textPrimary),
                   ),
                 ),
