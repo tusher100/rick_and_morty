@@ -7,9 +7,10 @@ import 'package:rickandmorty/features/home/providers/home_provider.dart';
 import 'package:rickandmorty/features/home/widgets/filter_sheet.dart';
 import 'package:rickandmorty/features/home/widgets/active_filters_bar.dart';
 import 'package:rickandmorty/features/home/widgets/home_states.dart';
-import 'package:rickandmorty/features/home/widgets/home_app_bar.dart';
-import 'package:rickandmorty/features/home/widgets/selection_app_bar.dart';
 import 'package:rickandmorty/features/home/widgets/character_grid.dart';
+import 'package:rickandmorty/core/widgets/rick_and_morty_app_bar.dart';
+import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
+import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
 import 'package:rickandmorty/core/utils/app_colors.dart';
 import 'package:rickandmorty/core/models/character_model.dart';
 
@@ -39,15 +40,32 @@ class HomeScreen extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: isSelectionMode
-          ? SelectionAppBar(selections: selectedCharacters)
-          : HomeAppBar(
-              state: state,
-              isSearchExpanded: isSearchExpanded,
-              searchController: searchController,
-              debouncer: debouncer,
-              onToggleFilter: () => _showFilterSheet(context, ref, state),
-            ),
+      appBar: RickAndMortyAppBar(
+        isSelectionMode: isSelectionMode,
+        selectionCount: selectedCharacters.value.length,
+        onClearSelection: () => selectedCharacters.value = {},
+        onBulkFavorite: () async {
+          for (var c in selectedCharacters.value) {
+            await ref.read(favoritesProvider.notifier).setFavorite(c, true);
+          }
+          selectedCharacters.value = {};
+        },
+        onBulkRestore: () async {
+          for (var c in selectedCharacters.value) {
+            await ref.read(localEditsProvider.notifier).deleteEdit(c.id);
+          }
+          selectedCharacters.value = {};
+        },
+        showSearch: true,
+        isSearchExpanded: isSearchExpanded,
+        searchController: searchController,
+        onSearchChanged: (val) {
+          debouncer.value?.cancel();
+          debouncer.value = Timer(const Duration(milliseconds: 500), () => notifier.search(val));
+        },
+        onToggleFilter: () => _showFilterSheet(context, ref, state),
+        hasActiveFilters: state.statusFilter != null || state.speciesFilter != null,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rickandmorty/core/widgets/rick_and_morty_app_bar.dart';
 import 'package:rickandmorty/core/widgets/app_button.dart';
 import 'package:rickandmorty/core/widgets/section_title.dart';
 import 'package:rickandmorty/core/widgets/status_indicator.dart';
 import 'package:rickandmorty/features/details/providers/character_details_provider.dart';
-import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
 import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
 import 'package:rickandmorty/features/editing/screens/edit_character_screen.dart';
 import 'package:rickandmorty/core/utils/app_colors.dart';
@@ -21,7 +21,6 @@ class CharacterDetailsScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final characterAsync = ref.watch(characterDetailProvider(characterId));
     final localEdits = ref.watch(characterEditProvider(characterId));
-    final isFavorite = ref.watch(isFavoriteProvider(characterId));
 
     return characterAsync.when(
       data: (characterData) {
@@ -35,34 +34,25 @@ class CharacterDetailsScreen extends HookConsumerWidget {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 350.h,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Hero(
-                    tag: 'character_${character.id}',
+          appBar: RickAndMortyAppBar(
+            character: character,
+            title: character.name,
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Hero(
+                  tag: 'character_${character.id}',
+                  child: AspectRatio(
+                    aspectRatio: 1.1,
                     child: CachedNetworkImage(
                       imageUrl: character.image,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                backgroundColor: AppColors.cardBackground,
-                elevation: 0,
-                leading: Padding(
-                  padding: EdgeInsets.all(8.w),
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.cardBackground.withValues(
-                      alpha: 0.5,
-                    ),
-                    child: BackButton(color: AppColors.textPrimary),
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
+                Padding(
                   padding: EdgeInsets.all(20.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,22 +78,6 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                               ],
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: isFavorite
-                                  ? AppColors.danger
-                                  : AppColors.textTertiary,
-                              size: 30.w,
-                            ),
-                            onPressed: () {
-                              ref
-                                  .read(favoritesProvider.notifier)
-                                  .toggleFavorite(character);
-                            },
-                          ),
                         ],
                       ),
                       SizedBox(height: 24.h),
@@ -124,7 +98,6 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                         character.locationName,
                         Icons.location_on,
                       ),
-
                       SizedBox(height: 40.h),
                       Center(
                         child: AppButton(
@@ -145,8 +118,8 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
