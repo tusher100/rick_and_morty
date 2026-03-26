@@ -24,6 +24,10 @@ class Character {
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
+    // Handle both API (nested) and DB (flat) formats
+    final originName = json['origin'] is Map ? json['origin']['name'] : json['originName'];
+    final locationName = json['location'] is Map ? json['location']['name'] : json['locationName'];
+    
     return Character(
       id: json['id'],
       name: json['name'],
@@ -31,9 +35,10 @@ class Character {
       species: json['species'],
       type: json['type'] ?? '',
       gender: json['gender'],
-      originName: json['origin']['name'],
-      locationName: json['location']['name'],
+      originName: originName ?? 'Unknown',
+      locationName: locationName ?? 'Unknown',
       image: json['image'],
+      isFavorite: json['isFavorite'] == 1 || json['isFavorite'] == true,
     );
   }
 
