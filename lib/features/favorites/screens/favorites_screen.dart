@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rickandmorty/features/home/widgets/character_card.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:rickandmorty/core/models/character_model.dart';
+import 'package:rickandmorty/features/home/widgets/character_grid_item.dart';
 import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
-import 'package:rickandmorty/features/details/screens/character_details_screen.dart';
 import 'package:rickandmorty/core/utils/app_colors.dart';
 import 'package:rickandmorty/core/widgets/app_text.dart';
 
@@ -50,6 +51,8 @@ class FavoritesScreen extends HookConsumerWidget {
               ),
             );
           }
+          final dummySelections = useValueNotifier<Set<Character>>({});
+
           return GridView.builder(
             padding: EdgeInsets.all(16.w),
             physics: const BouncingScrollPhysics(),
@@ -62,18 +65,12 @@ class FavoritesScreen extends HookConsumerWidget {
             itemCount: favorites.length,
             itemBuilder: (context, index) {
               final character = favorites[index];
-              return CharacterCard(
+              return CharacterGridItem(
                 key: ValueKey('fav_${character.id}'),
                 character: character,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CharacterDetailsScreen(characterId: character.id),
-                    ),
-                  );
-                },
+                selections: dummySelections,
+                isSelectionMode: false,
+                onToggleSelection: (_) {},
               );
             },
           );
