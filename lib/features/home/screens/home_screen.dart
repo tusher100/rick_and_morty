@@ -11,7 +11,6 @@ import 'package:rickandmorty/features/home/widgets/character_grid.dart';
 import 'package:rickandmorty/core/widgets/rick_and_morty_app_bar.dart';
 import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
 import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
-import 'package:rickandmorty/core/utils/app_colors.dart';
 import 'package:rickandmorty/core/models/character_model.dart';
 
 class HomeScreen extends HookConsumerWidget {
@@ -39,7 +38,7 @@ class HomeScreen extends HookConsumerWidget {
     }, [scrollController]);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: RickAndMortyAppBar(
         isSelectionMode: isSelectionMode,
         selectionCount: selectedCharacters.value.length,
@@ -90,7 +89,11 @@ class HomeScreen extends HookConsumerWidget {
                       isLoadingMore: state.isLoadingMore,
                       onToggleSelection: (c) => _toggleSelection(selectedCharacters, c),
                     ),
-              loading: () => const Center(child: CircularProgressIndicator(color: AppColors.textPrimary)),
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
               error: (err, stack) => HomeErrorState(onRetry: () => notifier.fetchInitial()),
             ),
           ),
@@ -112,7 +115,7 @@ class HomeScreen extends HookConsumerWidget {
   void _showFilterSheet(BuildContext context, WidgetRef ref, CharacterListState state) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.r))),
       builder: (context) => FilterSheet(

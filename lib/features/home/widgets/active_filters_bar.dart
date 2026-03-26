@@ -66,18 +66,19 @@ class ActiveFiltersBar extends StatelessWidget {
       padding: EdgeInsets.only(right: 8.w),
       child: Chip(
         key: key,
-        label: AppText.bodySmall(label, color: AppColors.cardBackground),
+        label: AppText.bodySmall(label, color: Colors.white),
         backgroundColor: AppColors.secondary,
-        deleteIcon: Icon(
+        deleteIcon: const Icon(
           Icons.close,
-          size: 16.w,
-          color: AppColors.cardBackground,
+          size: 16,
+          color: Colors.white70,
         ),
         onDeleted: onDeleted,
         materialTapTargetSize: MaterialTapTargetSize.padded,
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
+          side: BorderSide.none,
         ),
       ),
     );

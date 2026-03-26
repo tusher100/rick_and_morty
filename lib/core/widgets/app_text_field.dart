@@ -19,6 +19,8 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: EdgeInsets.only(bottom: 20.h),
       child: TextFormField(
@@ -26,31 +28,31 @@ class AppTextField extends StatelessWidget {
         style: AppText.getStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
+          color: isDark ? Colors.white : AppColors.textPrimary,
           fontFamily: 'Plus Jakarta Sans',
         ),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: AppText.getStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: isDark ? Colors.white70 : AppColors.textSecondary,
             fontFamily: 'Plus Jakarta Sans',
           ),
-          prefixIcon: Icon(icon, color: Colors.blueGrey),
+          prefixIcon: Icon(icon, color: isDark ? AppColors.secondary : Colors.blueGrey),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.divider),
+            borderSide: BorderSide(color: Theme.of(context).dividerColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: AppColors.border),
+            borderSide: BorderSide(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
             borderSide: const BorderSide(color: AppColors.secondary, width: 2),
           ),
           filled: true,
-          fillColor: Colors.grey[50],
+          fillColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
         ),
         validator: validator,
       ),

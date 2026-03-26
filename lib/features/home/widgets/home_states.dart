@@ -20,13 +20,13 @@ class HomeEmptyState extends StatelessWidget {
             child: Icon(
               isFiltered ? Icons.search_off : Icons.group_off,
               size: 80.w,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
             ),
           ),
           SizedBox(height: 16.h),
           AppText.h3(
             isFiltered ? 'No matching characters' : 'No characters found',
-            color: AppColors.textSecondary,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textSecondary,
           ),
           if (isFiltered) ...[
             SizedBox(height: 8.h),

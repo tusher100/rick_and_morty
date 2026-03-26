@@ -32,7 +32,7 @@ class EditCharacterScreen extends HookConsumerWidget {
 
 
     return Scaffold(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: RickAndMortyAppBar(
         character: character,
         title: 'Edit Character',
@@ -77,7 +77,7 @@ class EditCharacterScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildImageHeader(),
+              _buildImageHeader(context),
               SizedBox(height: 24.h),
               AppTextField(
                 label: 'Name',
@@ -123,7 +123,7 @@ class EditCharacterScreen extends HookConsumerWidget {
   }
 
 
-  Widget _buildImageHeader() {
+  Widget _buildImageHeader(BuildContext context) {
     return Center(
       child: Stack(
         alignment: Alignment.bottomRight,
@@ -134,14 +134,15 @@ class EditCharacterScreen extends HookConsumerWidget {
           ),
           Container(
             padding: EdgeInsets.all(8.w),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.secondary,
               shape: BoxShape.circle,
+              border: Border.all(color: Theme.of(context).colorScheme.surface, width: 2),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.camera_alt,
-              color: AppColors.cardBackground,
-              size: 20.w,
+              color: Colors.white,
+              size: 20,
             ),
           ),
         ],

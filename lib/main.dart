@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rickandmorty/features/home/screens/home_screen.dart';
+import 'package:rickandmorty/core/theme/app_theme.dart';
+import 'package:rickandmorty/core/theme/theme_provider.dart';
+import 'package:rickandmorty/features/main/screens/main_screen.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -12,11 +13,13 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
@@ -25,13 +28,10 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Rick & Morty Explorer',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            textTheme: GoogleFonts.rubikTextTheme(
-              Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
-            ),
-          ),
-          home: const HomeScreen(),
+          themeMode: themeMode,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          home: const MainScreen(),
         );
       },
     );

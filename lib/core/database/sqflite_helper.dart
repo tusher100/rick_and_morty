@@ -203,4 +203,9 @@ class SqfliteHelper {
     }
     return null;
   }
+
+  Future<void> clearAllLocalEdits() async {
+    final db = await instance.database;
+    await db.delete('local_edits');
+  }
 }

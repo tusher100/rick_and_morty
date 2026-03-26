@@ -72,7 +72,7 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
       return SliverAppBar(
         expandedHeight: expandedHeight ?? 300.h,
         pinned: true,
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.5,
         leading: _buildLeading(context, true),
         title: (title != null) ? AppText.h3(title!) : null,
@@ -82,7 +82,7 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
     }
 
     return AppBar(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0.5,
       centerTitle: title != null && title!.length > 15,
       leading: _buildLeading(context, false),
@@ -95,12 +95,16 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final canPop = Navigator.canPop(context);
     if (!canPop) return const SizedBox.shrink();
 
-    final backButton = BackButton(color: AppColors.textPrimary);
+    final backButton = BackButton(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : AppColors.textPrimary,
+    );
     if (withBackground) {
       return Padding(
         padding: EdgeInsets.all(8.w),
         child: CircleAvatar(
-          backgroundColor: AppColors.cardBackground.withValues(alpha: 0.6),
+          backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
           child: backButton,
         ),
       );
@@ -137,22 +141,45 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     if (showSearch && isSearchExpanded != null) {
       list.add(IconButton(
-        icon: Icon(Icons.search, color: AppColors.textPrimary, size: 24.w),
+        icon: Icon(
+          Icons.search,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
+          size: 24.w,
+        ),
         onPressed: () => isSearchExpanded!.value = true,
       ));
     }
 
     if (onToggleFilter != null) {
       list.add(IconButton(
-        icon: Icon(Icons.tune, color: hasActiveFilters ? AppColors.secondary : AppColors.textPrimary, size: 24.w),
+        icon: Icon(
+          Icons.tune,
+          color: hasActiveFilters
+              ? AppColors.secondary
+              : (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : AppColors.textPrimary),
+          size: 24.w,
+        ),
         onPressed: onToggleFilter,
       ));
     }
 
     if (showSearch && !isSliver) {
-       list.add(IconButton(
-        icon: Icon(Icons.favorite_outline, size: 24.w, color: AppColors.textPrimary),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritesScreen())),
+      list.add(IconButton(
+        icon: Icon(
+          Icons.favorite_outline,
+          size: 24.w,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
+        ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+        ),
       ));
     }
 
@@ -178,9 +205,14 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   Widget _buildSearchAppBar(BuildContext context, WidgetRef ref) {
     return AppBar(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
+        ),
         onPressed: () {
           isSearchExpanded?.value = false;
           searchController?.clear();
@@ -190,10 +222,20 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: TextField(
         controller: searchController,
         autofocus: true,
-        style: AppText.getStyle(fontSize: 16, color: AppColors.textPrimary),
+        style: AppText.getStyle(
+          fontSize: 16,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
+        ),
         decoration: InputDecoration(
           hintText: 'Search characters...',
-          hintStyle: AppText.getStyle(fontSize: 16, color: AppColors.textSecondary),
+          hintStyle: AppText.getStyle(
+            fontSize: 16,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white70
+                : AppColors.textSecondary,
+          ),
           border: InputBorder.none,
           suffixIcon: searchController?.text.isNotEmpty == true
               ? IconButton(

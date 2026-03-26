@@ -33,6 +33,16 @@ class LocalEditsNotifier extends AsyncNotifier<Map<int, Map<String, dynamic>>> {
       state = AsyncError(e, st);
     }
   }
+
+  Future<void> resetAllEdits() async {
+    state = const AsyncLoading();
+    try {
+      await SqfliteHelper.instance.clearAllLocalEdits();
+      state = const AsyncData({});
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
 }
 
 final localEditsProvider =

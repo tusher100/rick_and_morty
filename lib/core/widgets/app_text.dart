@@ -117,14 +117,18 @@ class AppText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isTablet = MediaQuery.of(context).size.width >= 600;
+    final defaultColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black87;
+
     final textStyle = GoogleFonts.getFont(fontFamily).copyWith(
       fontSize: isTablet
           ? (fontSize != null ? fontSize! * 0.96 : null)
           : fontSize?.sp,
       fontWeight: fontWeight,
-      color: gradient != null ? null : color ?? Colors.black,
+      color: gradient != null ? null : color ?? defaultColor,
       decoration: isUnderlined ? TextDecoration.underline : TextDecoration.none,
-      decorationColor: isUnderlined ? (underlineColor ?? Colors.black) : null,
+      decorationColor: isUnderlined ? (underlineColor ?? defaultColor) : null,
       letterSpacing: letterSpacing,
       fontStyle: fontStyle,
       height: isTablet ? (fontHeight == null ? null : 0) : fontHeight,
@@ -184,7 +188,9 @@ TextSpan customTextSpan({
     style: GoogleFonts.getFont(fontFamily).copyWith(
       fontSize: fontSize?.sp,
       fontWeight: fontWeight,
-      color: gradient != null ? null : color ?? Colors.black,
+      color: gradient != null
+          ? null
+          : color ?? (fontWeight == FontWeight.bold ? Colors.white : Colors.white70),
       decoration: isUnderlined ? TextDecoration.underline : TextDecoration.none,
       decorationColor: isUnderlined ? (underlineColor ?? Colors.black) : null,
       letterSpacing: letterSpacing,

@@ -43,14 +43,19 @@ class _FilterSheetState extends State<FilterSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(
+                  Icons.close,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : AppColors.textPrimary,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
               Container(
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: AppColors.divider,
+                  color: Theme.of(context).dividerColor,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -115,6 +120,8 @@ class _FilterSheetState extends State<FilterSheet> {
       runSpacing: 8.h,
       children: options.map((opt) {
         final isSelected = selected == opt;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
         return InkWell(
           onTap: () => onSelected(isSelected ? null : opt),
           child: Container(
@@ -122,16 +129,20 @@ class _FilterSheetState extends State<FilterSheet> {
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.secondary.withValues(alpha: 0.1)
-                  : AppColors.background,
+                  : (isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.background),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: isSelected ? AppColors.secondary : AppColors.border,
+                color: isSelected
+                    ? AppColors.secondary
+                    : Theme.of(context).dividerColor.withValues(alpha: 0.2),
                 width: 1.5,
               ),
             ),
             child: AppText.bodySmall(
               opt,
-              color: isSelected ? AppColors.secondary : AppColors.textPrimary,
+              color: isSelected ? AppColors.secondary : null,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),

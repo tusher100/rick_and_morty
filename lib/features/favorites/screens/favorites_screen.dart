@@ -16,12 +16,16 @@ class FavoritesScreen extends HookConsumerWidget {
     final favoritesState = ref.watch(favoritesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: AppText.h2('My Favorites'),
-        backgroundColor: AppColors.cardBackground,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0.5,
-        leading: BackButton(color: AppColors.textPrimary),
+        leading: BackButton(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
+        ),
       ),
       body: favoritesState.when(
         data: (favorites) {
@@ -35,13 +39,17 @@ class FavoritesScreen extends HookConsumerWidget {
                     child: Icon(
                       Icons.favorite_border,
                       size: 80.w,
-                      color: AppColors.textTertiary,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : AppColors.textTertiary,
                     ),
                   ),
                   SizedBox(height: 16.h),
                   AppText.h3(
                     'No favorites yet',
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : AppColors.textSecondary,
                   ),
                   SizedBox(height: 8.h),
                   AppText.bodySmall(
@@ -75,8 +83,8 @@ class FavoritesScreen extends HookConsumerWidget {
             },
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
         ),
         error: (err, stack) => Center(
           child: AppText.bodyMedium(

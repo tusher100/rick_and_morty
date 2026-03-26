@@ -68,6 +68,3 @@ The project includes unit tests for core business logic, specifically the charac
 ```bash
 flutter test
 ```
-
----
-*Created with ❤️ for the Rick and Morty Fan Community.*

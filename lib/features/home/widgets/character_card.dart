@@ -46,7 +46,7 @@ class CharacterCard extends HookConsumerWidget {
                         width: double.infinity,
                         height: double.infinity,
                         placeholder: (context, url) => Container(
-                          color: AppColors.border,
+                          color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
                           child: const Center(
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
@@ -65,7 +65,7 @@ class CharacterCard extends HookConsumerWidget {
                           return GestureDetector(
                             onTap: () => retryKey.value++,
                             child: Container(
-                              color: AppColors.border,
+                              color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -122,7 +122,7 @@ class CharacterCard extends HookConsumerWidget {
                                   '${displayCharacter.status} • ${displayCharacter.species}',
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               fontFamily: 'Plus Jakarta Sans',

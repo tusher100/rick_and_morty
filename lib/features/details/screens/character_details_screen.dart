@@ -33,7 +33,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
         final character = characterData.mergeWithEdits(localEdits);
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: RickAndMortyAppBar(
             character: character,
             title: character.name,
@@ -83,17 +83,19 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                       SizedBox(height: 24.h),
                       const SectionTitle(title: 'Information'),
                       SizedBox(height: 12.h),
-                      _buildInfoGrid(character),
+                      _buildInfoGrid(context, character),
                       SizedBox(height: 24.h),
                       const SectionTitle(title: 'Location details'),
                       SizedBox(height: 12.h),
                       _buildLocationInfo(
+                        context,
                         'Origin',
                         character.originName,
                         Icons.public,
                       ),
                       SizedBox(height: 12.h),
                       _buildLocationInfo(
+                        context,
                         'Current Location',
                         character.locationName,
                         Icons.location_on,
@@ -123,9 +125,10 @@ class CharacterDetailsScreen extends HookConsumerWidget {
           ),
         );
       },
-      loading: () => const Scaffold(
+      loading: () => Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+          child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
         ),
       ),
       error: (e, st) => Scaffold(
@@ -136,18 +139,19 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildInfoGrid(dynamic character) {
+  Widget _buildInfoGrid(BuildContext context, dynamic character) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildGridItem('Gender', character.gender, Icons.person_outline),
-          _buildDivider(),
+          _buildDivider(context),
           _buildGridItem(
             'Type',
             character.type.isEmpty ? 'Unknown' : character.type,
@@ -161,7 +165,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
   Widget _buildGridItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, size: 24.w, color: Colors.blueGrey),
+        Icon(icon, size: 24.w, color: AppColors.secondary),
         SizedBox(height: 8.h),
         AppText.bodySmall(label),
         SizedBox(height: 4.h),
@@ -170,24 +174,24 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Container(height: 40.h, width: 1, color: AppColors.divider);
+  Widget _buildDivider(BuildContext context) {
+    return Container(height: 40.h, width: 1, color: Theme.of(context).dividerColor.withValues(alpha: 0.2));
   }
 
-  Widget _buildLocationInfo(String label, String value, IconData icon) {
+  Widget _buildLocationInfo(BuildContext context, String label, String value, IconData icon) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: AppColors.iconBackground,
+              color: AppColors.iconBackground.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 1.0),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(icon, size: 24.w, color: AppColors.secondary),
