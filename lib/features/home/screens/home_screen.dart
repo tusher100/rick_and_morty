@@ -205,7 +205,7 @@ class HomeScreen extends HookConsumerWidget {
             Container(
               padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
-                color: AppColors.danger.withOpacity(0.05),
+                color: AppColors.danger.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.error_outline, size: 50.w, color: AppColors.danger),

@@ -27,5 +27,5 @@ class AppColors {
   static final Color border = Colors.grey[200]!;
   static final Color divider = Colors.grey[300]!;
 
-  static Color shadowColor = Colors.black.withOpacity(0.08);
+  static Color shadowColor = Colors.black.withValues(alpha: 0.08);
 }
