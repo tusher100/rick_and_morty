@@ -20,8 +20,13 @@ class ConnectivityNotifier extends Notifier<ConnectivityStatus> {
   }
 
   Future<void> _init() async {
-    final result = await Connectivity().checkConnectivity();
-    _updateStatus(result);
+    try {
+      final result = await Connectivity().checkConnectivity();
+      _updateStatus(result);
+    } catch (e) {
+      // Graceful fallback if plugin is not linked yet
+      state = ConnectivityStatus.isConnected;
+    }
   }
 
   void _updateStatus(List<ConnectivityResult> results) {
