@@ -12,16 +12,10 @@ class MainScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = useState(0);
 
-    final screens = [
-      const HomeScreen(),
-      const SettingsScreen(),
-    ];
+    final screens = [const HomeScreen(), const SettingsScreen()];
 
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex.value,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex.value, children: screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex.value,
         onTap: (index) => currentIndex.value = index,

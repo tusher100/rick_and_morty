@@ -34,7 +34,7 @@ class SettingsScreen extends HookConsumerWidget {
               onChanged: (value) {
                 ref.read(themeProvider.notifier).toggleTheme();
               },
-              activeColor: AppColors.secondary,
+              activeThumbColor: AppColors.secondary,
             ),
           ),
           SizedBox(height: 16.h),
@@ -113,7 +113,13 @@ class SettingsScreen extends HookConsumerWidget {
           color: textColor,
         ),
         subtitle: AppText.bodySmall(subtitle),
-        trailing: trailing ?? Icon(Icons.chevron_right, size: 20.w, color: AppColors.textTertiary),
+        trailing:
+            trailing ??
+            Icon(
+              Icons.chevron_right,
+              size: 20.w,
+              color: AppColors.textTertiary,
+            ),
         onTap: onTap,
       ),
     );
@@ -137,7 +143,9 @@ class SettingsScreen extends HookConsumerWidget {
               ref.read(localEditsProvider.notifier).resetAllEdits();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('All characters restored to original data')),
+                const SnackBar(
+                  content: Text('All characters restored to original data'),
+                ),
               );
             },
             child: AppText.bodyMedium('Reset All', color: AppColors.danger),
