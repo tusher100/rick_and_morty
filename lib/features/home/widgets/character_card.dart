@@ -56,8 +56,9 @@ class CharacterCard extends HookConsumerWidget {
                           ),
                         ),
                         errorWidget: (context, url, error) {
-                          if (retryKey.value < 2) {
-                            Future.delayed(Duration(seconds: 1 + retryKey.value), () {
+                          if (retryKey.value < 3) {
+                            // Exponential backoff for 429s
+                            Future.delayed(Duration(seconds: (retryKey.value + 1) * 2), () {
                               if (context.mounted) retryKey.value++;
                             });
                           }
