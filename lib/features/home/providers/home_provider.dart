@@ -40,7 +40,9 @@ class CharacterListState {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       searchQuery: clearSearch ? null : (searchQuery ?? this.searchQuery),
       statusFilter: clearStatus ? null : (statusFilter ?? this.statusFilter),
-      speciesFilter: clearSpecies ? null : (speciesFilter ?? this.speciesFilter),
+      speciesFilter: clearSpecies
+          ? null
+          : (speciesFilter ?? this.speciesFilter),
     );
   }
 }
@@ -59,10 +61,10 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     state = state.copyWith(characters: const AsyncValue.loading());
     try {
       final fetchedData = await _fetchCharactersData(
-        1, 
-        state.searchQuery, 
-        state.statusFilter, 
-        state.speciesFilter
+        1,
+        state.searchQuery,
+        state.statusFilter,
+        state.speciesFilter,
       );
       _currentPage = 1;
       state = state.copyWith(
@@ -82,12 +84,13 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     await fetchInitial();
   }
 
-  Future<void> setFilters({String? status, String? species, bool clearAll = false}) async {
+  Future<void> setFilters({
+    String? status,
+    String? species,
+    bool clearAll = false,
+  }) async {
     if (clearAll) {
-      state = state.copyWith(
-        clearStatus: true,
-        clearSpecies: true,
-      );
+      state = state.copyWith(clearStatus: true, clearSpecies: true);
     } else {
       state = state.copyWith(
         statusFilter: status,
@@ -106,15 +109,17 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     try {
       final nextPage = _currentPage + 1;
       final fetchedData = await _fetchCharactersData(
-        nextPage, 
+        nextPage,
         state.searchQuery,
         state.statusFilter,
-        state.speciesFilter
+        state.speciesFilter,
       );
 
       final currentValue = state.characters.asData?.value ?? [];
       final existingIds = currentValue.map((c) => c.id).toSet();
-      final uniqueNewCharacters = fetchedData.characters.where((c) => !existingIds.contains(c.id)).toList();
+      final uniqueNewCharacters = fetchedData.characters
+          .where((c) => !existingIds.contains(c.id))
+          .toList();
 
       _currentPage = nextPage;
       state = state.copyWith(
@@ -128,7 +133,7 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
   }
 
   Future<({List<Character> characters, bool hasMore})> _fetchCharactersData(
-    int page, 
+    int page,
     String? name,
     String? status,
     String? species,
@@ -136,32 +141,29 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     final apiClient = ref.read(apiClientProvider);
     try {
       final data = await apiClient.fetchCharacters(
-        page: page, 
+        page: page,
         name: name,
         status: status,
         species: species,
       );
       final List results = data['results'];
-      final characters = results.map((json) => Character.fromJson(json)).toList();
+      final characters = results
+          .map((json) => Character.fromJson(json))
+          .toList();
 
       // Only cache full list results (no filters)
       if (name == null && status == null && species == null) {
         await SqfliteHelper.instance.saveCharacters(characters, page);
       }
 
-      return (
-        characters: characters,
-        hasMore: data['info']['next'] != null,
-      );
+      return (characters: characters, hasMore: data['info']['next'] != null);
     } catch (e) {
       // For filtered results, we don't have deep cache logic for page combinations yet
       if (name == null && status == null && species == null) {
-        final cachedCharacters = await SqfliteHelper.instance.getCachedCharacters(page: page);
+        final cachedCharacters = await SqfliteHelper.instance
+            .getCachedCharacters(page: page);
         if (cachedCharacters.isNotEmpty) {
-          return (
-            characters: cachedCharacters,
-            hasMore: true,
-          );
+          return (characters: cachedCharacters, hasMore: true);
         }
       }
       rethrow;
@@ -169,6 +171,7 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
   }
 }
 
-final characterListProvider = NotifierProvider<CharacterListNotifier, CharacterListState>(() {
-  return CharacterListNotifier();
-});
+final characterListProvider =
+    NotifierProvider<CharacterListNotifier, CharacterListState>(() {
+      return CharacterListNotifier();
+    });

@@ -18,11 +18,7 @@ class SqfliteHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
@@ -79,24 +75,20 @@ class SqfliteHelper {
   Future<void> saveCharacters(List<Character> characters, int page) async {
     final db = await instance.database;
     final batch = db.batch();
-    
+
     for (var character in characters) {
-      batch.insert(
-        'characters_cache',
-        {
-          'id': character.id,
-          'name': character.name,
-          'status': character.status,
-          'species': character.species,
-          'type': character.type,
-          'gender': character.gender,
-          'originName': character.originName,
-          'locationName': character.locationName,
-          'image': character.image,
-          'page': page,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      batch.insert('characters_cache', {
+        'id': character.id,
+        'name': character.name,
+        'status': character.status,
+        'species': character.species,
+        'type': character.type,
+        'gender': character.gender,
+        'originName': character.originName,
+        'locationName': character.locationName,
+        'image': character.image,
+        'page': page,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
     }
     await batch.commit(noResult: true);
   }
@@ -105,7 +97,11 @@ class SqfliteHelper {
     final db = await instance.database;
     final List<Map<String, dynamic>> result;
     if (page != null) {
-      result = await db.query('characters_cache', where: 'page = ?', whereArgs: [page]);
+      result = await db.query(
+        'characters_cache',
+        where: 'page = ?',
+        whereArgs: [page],
+      );
     } else {
       result = await db.query('characters_cache', orderBy: 'id ASC');
     }
@@ -131,22 +127,18 @@ class SqfliteHelper {
 
   Future<void> _addToFavorites(Character character) async {
     final db = await instance.database;
-    await db.insert(
-      'favorites',
-      {
-        'id': character.id,
-        'name': character.name,
-        'status': character.status,
-        'species': character.species,
-        'type': character.type,
-        'gender': character.gender,
-        'originName': character.originName,
-        'locationName': character.locationName,
-        'image': character.image,
-        'createdAt': DateTime.now().toIso8601String(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('favorites', {
+      'id': character.id,
+      'name': character.name,
+      'status': character.status,
+      'species': character.species,
+      'type': character.type,
+      'gender': character.gender,
+      'originName': character.originName,
+      'locationName': character.locationName,
+      'image': character.image,
+      'createdAt': DateTime.now().toIso8601String(),
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> _deleteFromFavorites(int id) async {
@@ -172,33 +164,25 @@ class SqfliteHelper {
     return result.isNotEmpty;
   }
 
-  //Local Edits Methods 
+  //Local Edits Methods
 
   Future<void> saveLocalEdit(Map<String, dynamic> editData) async {
     final db = await instance.database;
-    await db.insert(
-      'local_edits',
-      {
-        ...editData,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('local_edits', {
+      ...editData,
+      'updatedAt': DateTime.now().toIso8601String(),
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> deleteLocalEdit(int id) async {
     final db = await instance.database;
-    await db.delete(
-      'local_edits',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete('local_edits', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<Map<int, Map<String, dynamic>>> getAllLocalEdits() async {
     final db = await instance.database;
     final result = await db.query('local_edits');
-    
+
     final Map<int, Map<String, dynamic>> edits = {};
     for (var row in result) {
       final id = row['id'] as int;

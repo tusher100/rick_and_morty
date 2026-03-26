@@ -77,15 +77,21 @@ class _FilterSheetState extends State<FilterSheet> {
           SizedBox(height: 24.h),
           AppText.bodyMedium('Status', fontWeight: FontWeight.bold),
           SizedBox(height: 12.h),
-          _buildFilterOptions(['Alive', 'Dead', 'Unknown'], selectedStatus, (val) {
+          _buildFilterOptions(['Alive', 'Dead', 'Unknown'], selectedStatus, (
+            val,
+          ) {
             setState(() => selectedStatus = val);
           }),
           SizedBox(height: 24.h),
           AppText.bodyMedium('Species', fontWeight: FontWeight.bold),
           SizedBox(height: 12.h),
-          _buildFilterOptions(['Human', 'Alien', 'Robot', 'Humanoid', 'Poopybutthole'], selectedSpecies, (val) {
-            setState(() => selectedSpecies = val);
-          }),
+          _buildFilterOptions(
+            ['Human', 'Alien', 'Robot', 'Humanoid', 'Poopybutthole'],
+            selectedSpecies,
+            (val) {
+              setState(() => selectedSpecies = val);
+            },
+          ),
           SizedBox(height: 40.h),
           AppButton(
             onPressed: () {
@@ -99,7 +105,11 @@ class _FilterSheetState extends State<FilterSheet> {
     );
   }
 
-  Widget _buildFilterOptions(List<String> options, String? selected, Function(String?) onSelected) {
+  Widget _buildFilterOptions(
+    List<String> options,
+    String? selected,
+    Function(String?) onSelected,
+  ) {
     return Wrap(
       spacing: 8.w,
       runSpacing: 8.h,
@@ -110,7 +120,9 @@ class _FilterSheetState extends State<FilterSheet> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.secondary.withValues(alpha: 0.1) : AppColors.background,
+              color: isSelected
+                  ? AppColors.secondary.withValues(alpha: 0.1)
+                  : AppColors.background,
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: isSelected ? AppColors.secondary : AppColors.border,
@@ -118,7 +130,7 @@ class _FilterSheetState extends State<FilterSheet> {
               ),
             ),
             child: AppText.bodySmall(
-              opt, 
+              opt,
               color: isSelected ? AppColors.secondary : AppColors.textPrimary,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

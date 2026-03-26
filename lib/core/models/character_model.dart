@@ -9,7 +9,7 @@ class Character {
   final String locationName;
   final String image;
   final bool isFavorite;
-  
+
   Character({
     required this.id,
     required this.name,
@@ -25,9 +25,13 @@ class Character {
 
   factory Character.fromJson(Map<String, dynamic> json) {
     // Handle both API (nested) and DB (flat) formats
-    final originName = json['origin'] is Map ? json['origin']['name'] : json['originName'];
-    final locationName = json['location'] is Map ? json['location']['name'] : json['locationName'];
-    
+    final originName = json['origin'] is Map
+        ? json['origin']['name']
+        : json['originName'];
+    final locationName = json['location'] is Map
+        ? json['location']['name']
+        : json['locationName'];
+
     return Character(
       id: json['id'],
       name: json['name'],

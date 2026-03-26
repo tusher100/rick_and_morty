@@ -31,7 +31,11 @@ class FavoritesScreen extends HookConsumerWidget {
                 children: [
                   Opacity(
                     opacity: 0.3,
-                    child: Icon(Icons.favorite_border, size: 80.w, color: AppColors.textTertiary),
+                    child: Icon(
+                      Icons.favorite_border,
+                      size: 80.w,
+                      color: AppColors.textTertiary,
+                    ),
                   ),
                   SizedBox(height: 16.h),
                   AppText.h3(
@@ -65,9 +69,8 @@ class FavoritesScreen extends HookConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CharacterDetailsScreen(
-                        characterId: character.id,
-                      ),
+                      builder: (context) =>
+                          CharacterDetailsScreen(characterId: character.id),
                     ),
                   );
                 },

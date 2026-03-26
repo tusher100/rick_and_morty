@@ -30,22 +30,25 @@ class ActiveFiltersBar extends StatelessWidget {
           children: [
             if (statusFilter != null)
               _buildFilterChip(
-                context, 
-                'Status: $statusFilter', 
+                context,
+                'Status: $statusFilter',
                 ValueKey('status_$statusFilter'),
                 onClearStatus,
               ),
             if (speciesFilter != null)
               _buildFilterChip(
-                context, 
-                'Species: $speciesFilter', 
+                context,
+                'Species: $speciesFilter',
                 ValueKey('species_$speciesFilter'),
                 onClearSpecies,
               ),
             if (statusFilter != null || speciesFilter != null)
               TextButton(
                 onPressed: onClearAll,
-                child: AppText.bodySmall('Clear All', color: AppColors.secondary),
+                child: AppText.bodySmall(
+                  'Clear All',
+                  color: AppColors.secondary,
+                ),
               ),
           ],
         ),
@@ -53,18 +56,29 @@ class ActiveFiltersBar extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChip(BuildContext context, String label, Key key, VoidCallback onDeleted) {
+  Widget _buildFilterChip(
+    BuildContext context,
+    String label,
+    Key key,
+    VoidCallback onDeleted,
+  ) {
     return Padding(
       padding: EdgeInsets.only(right: 8.w),
       child: Chip(
         key: key,
         label: AppText.bodySmall(label, color: AppColors.cardBackground),
         backgroundColor: AppColors.secondary,
-        deleteIcon: Icon(Icons.close, size: 16.w, color: AppColors.cardBackground),
+        deleteIcon: Icon(
+          Icons.close,
+          size: 16.w,
+          color: AppColors.cardBackground,
+        ),
         onDeleted: onDeleted,
         materialTapTargetSize: MaterialTapTargetSize.padded,
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
       ),
     );
   }

@@ -4,7 +4,10 @@ import 'package:rickandmorty/core/database/sqflite_helper.dart';
 import 'package:rickandmorty/features/home/providers/home_provider.dart';
 
 // Provider to get a character by ID, looking in memory first, then DB
-final characterDetailProvider = FutureProvider.family<Character?, int>((ref, id) async {
+final characterDetailProvider = FutureProvider.family<Character?, int>((
+  ref,
+  id,
+) async {
   // Check current home list in memory
   final homeState = ref.watch(characterListProvider);
   final characters = homeState.characters.asData?.value;

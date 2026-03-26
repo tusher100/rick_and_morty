@@ -18,9 +18,9 @@ class HomeEmptyState extends StatelessWidget {
           Opacity(
             opacity: 0.5,
             child: Icon(
-              isFiltered ? Icons.search_off : Icons.group_off, 
-              size: 80.w, 
-              color: AppColors.textSecondary
+              isFiltered ? Icons.search_off : Icons.group_off,
+              size: 80.w,
+              color: AppColors.textSecondary,
             ),
           ),
           SizedBox(height: 16.h),
@@ -57,7 +57,11 @@ class HomeErrorState extends StatelessWidget {
                 color: AppColors.danger.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.error_outline, size: 50.w, color: AppColors.danger),
+              child: Icon(
+                Icons.error_outline,
+                size: 50.w,
+                color: AppColors.danger,
+              ),
             ),
             SizedBox(height: 24.h),
             AppText.h2('Connection Error'),
@@ -67,10 +71,7 @@ class HomeErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 32.h),
-            AppButton(
-              onPressed: onRetry,
-              label: 'Retry',
-            ),
+            AppButton(onPressed: onRetry, label: 'Retry'),
           ],
         ),
       ),

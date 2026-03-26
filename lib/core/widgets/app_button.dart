@@ -24,9 +24,7 @@ class AppButton extends StatelessWidget {
     final style = ElevatedButton.styleFrom(
       backgroundColor: backgroundColor ?? AppColors.primary,
       foregroundColor: foregroundColor ?? AppColors.cardBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       elevation: 0,
       padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
     );

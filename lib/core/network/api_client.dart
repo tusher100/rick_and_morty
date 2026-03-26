@@ -7,7 +7,7 @@ class ApiClient {
   String get _baseUrl => dotenv.get(AppConstants.envBaseUrl);
 
   Future<Map<String, dynamic>> fetchCharacters({
-    int page = 1, 
+    int page = 1,
     String? name,
     String? status,
     String? species,
@@ -19,9 +19,11 @@ class ApiClient {
         if (status != null && status.isNotEmpty) 'status': status,
         if (species != null && species.isNotEmpty) 'species': species,
       };
-      
-      final uri = Uri.parse('${_baseUrl}character').replace(queryParameters: queryParameters);
-      
+
+      final uri = Uri.parse(
+        '${_baseUrl}character',
+      ).replace(queryParameters: queryParameters);
+
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
@@ -29,7 +31,7 @@ class ApiClient {
       } else if (response.statusCode == 404) {
         return {
           'info': {'count': 0, 'pages': 0, 'next': null, 'prev': null},
-          'results': []
+          'results': [],
         };
       } else {
         throw Exception('Failed to load characters: ${response.statusCode}');

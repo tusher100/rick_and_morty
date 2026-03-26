@@ -40,7 +40,8 @@ class AppText extends StatelessWidget {
   });
 
   // Factory methods for consistent styles
-  factory AppText.h1(String text, {Color? color, TextAlign? textAlign}) => AppText(
+  factory AppText.h1(String text, {Color? color, TextAlign? textAlign}) =>
+      AppText(
         text: text,
         fontSize: 28,
         fontWeight: FontWeight.w900,
@@ -50,7 +51,8 @@ class AppText extends StatelessWidget {
         fontFamily: 'Rubik',
       );
 
-  factory AppText.h2(String text, {Color? color, TextAlign? textAlign}) => AppText(
+  factory AppText.h2(String text, {Color? color, TextAlign? textAlign}) =>
+      AppText(
         text: text,
         fontSize: 22,
         fontWeight: FontWeight.w900,
@@ -60,7 +62,8 @@ class AppText extends StatelessWidget {
         fontFamily: 'Rubik',
       );
 
-  factory AppText.h3(String text, {Color? color, TextAlign? textAlign}) => AppText(
+  factory AppText.h3(String text, {Color? color, TextAlign? textAlign}) =>
+      AppText(
         text: text,
         fontSize: 18,
         fontWeight: FontWeight.bold,
@@ -69,32 +72,47 @@ class AppText extends StatelessWidget {
         fontFamily: 'Rubik',
       );
 
-  factory AppText.bodyLarge(String text, {Color? color, TextAlign? textAlign, FontWeight? fontWeight}) => AppText(
-        text: text,
-        fontSize: 16,
-        fontWeight: fontWeight ?? FontWeight.w500,
-        color: color,
-        textAlign: textAlign,
-        fontFamily: 'Plus Jakarta Sans',
-      );
+  factory AppText.bodyLarge(
+    String text, {
+    Color? color,
+    TextAlign? textAlign,
+    FontWeight? fontWeight,
+  }) => AppText(
+    text: text,
+    fontSize: 16,
+    fontWeight: fontWeight ?? FontWeight.w500,
+    color: color,
+    textAlign: textAlign,
+    fontFamily: 'Plus Jakarta Sans',
+  );
 
-  factory AppText.bodyMedium(String text, {Color? color, TextAlign? textAlign, FontWeight? fontWeight}) => AppText(
-        text: text,
-        fontSize: 14,
-        fontWeight: fontWeight ?? FontWeight.bold,
-        color: color,
-        textAlign: textAlign,
-        fontFamily: 'Plus Jakarta Sans',
-      );
+  factory AppText.bodyMedium(
+    String text, {
+    Color? color,
+    TextAlign? textAlign,
+    FontWeight? fontWeight,
+  }) => AppText(
+    text: text,
+    fontSize: 14,
+    fontWeight: fontWeight ?? FontWeight.bold,
+    color: color,
+    textAlign: textAlign,
+    fontFamily: 'Plus Jakarta Sans',
+  );
 
-  factory AppText.bodySmall(String text, {Color? color, TextAlign? textAlign, FontWeight? fontWeight}) => AppText(
-        text: text,
-        fontSize: 12,
-        fontWeight: fontWeight,
-        color: color,
-        textAlign: textAlign,
-        fontFamily: 'Plus Jakarta Sans',
-      );
+  factory AppText.bodySmall(
+    String text, {
+    Color? color,
+    TextAlign? textAlign,
+    FontWeight? fontWeight,
+  }) => AppText(
+    text: text,
+    fontSize: 12,
+    fontWeight: fontWeight,
+    color: color,
+    textAlign: textAlign,
+    fontFamily: 'Plus Jakarta Sans',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +159,9 @@ class AppText extends StatelessWidget {
     Color? color,
     String fontFamily = 'Rubik',
   }) {
-    return GoogleFonts.getFont(fontFamily).copyWith(
-      fontSize: fontSize?.sp,
-      fontWeight: fontWeight,
-      color: color,
-    );
+    return GoogleFonts.getFont(
+      fontFamily,
+    ).copyWith(fontSize: fontSize?.sp, fontWeight: fontWeight, color: color);
   }
 }
 
@@ -158,7 +174,7 @@ TextSpan customTextSpan({
   double? fontSize,
   FontWeight? fontWeight,
   double? letterSpacing,
-  double? height, 
+  double? height,
   FontStyle? fontStyle,
   GestureRecognizer? recognizer,
   String fontFamily = 'Rubik',

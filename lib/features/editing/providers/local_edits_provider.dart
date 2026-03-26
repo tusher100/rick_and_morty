@@ -15,10 +15,7 @@ class LocalEditsNotifier extends AsyncNotifier<Map<int, Map<String, dynamic>>> {
   Future<void> saveEdit(int id, Map<String, dynamic> editData) async {
     state = const AsyncLoading();
     try {
-      await SqfliteHelper.instance.saveLocalEdit({
-        'id': id,
-        ...editData,
-      });
+      await SqfliteHelper.instance.saveLocalEdit({'id': id, ...editData});
       final updatedEdits = await _loadEdits();
       state = AsyncData(updatedEdits);
     } catch (e, st) {
@@ -38,15 +35,18 @@ class LocalEditsNotifier extends AsyncNotifier<Map<int, Map<String, dynamic>>> {
   }
 }
 
-final localEditsProvider = AsyncNotifierProvider<LocalEditsNotifier, Map<int, Map<String, dynamic>>>(() {
-  return LocalEditsNotifier();
-});
+final localEditsProvider =
+    AsyncNotifierProvider<LocalEditsNotifier, Map<int, Map<String, dynamic>>>(
+      () {
+        return LocalEditsNotifier();
+      },
+    );
 
 // A provider to get edits for a specific character ID (reactive)
-final characterEditProvider = Provider.family<Map<String, dynamic>?, int>((ref, id) {
+final characterEditProvider = Provider.family<Map<String, dynamic>?, int>((
+  ref,
+  id,
+) {
   final editsState = ref.watch(localEditsProvider);
-  return editsState.maybeWhen(
-    data: (edits) => edits[id],
-    orElse: () => null,
-  );
+  return editsState.maybeWhen(data: (edits) => edits[id], orElse: () => null);
 });

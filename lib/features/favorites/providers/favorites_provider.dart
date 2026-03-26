@@ -36,9 +36,10 @@ class FavoritesNotifier extends AsyncNotifier<List<Character>> {
   }
 }
 
-final favoritesProvider = AsyncNotifierProvider<FavoritesNotifier, List<Character>>(() {
-  return FavoritesNotifier();
-});
+final favoritesProvider =
+    AsyncNotifierProvider<FavoritesNotifier, List<Character>>(() {
+      return FavoritesNotifier();
+    });
 
 // A provider to check if a specific ID is favorited (reactive)
 final isFavoriteProvider = Provider.family<bool, int>((ref, id) {
