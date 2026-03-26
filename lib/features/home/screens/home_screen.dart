@@ -79,7 +79,11 @@ class HomeScreen extends HookConsumerWidget {
           Expanded(
             child: state.characters.when(
               data: (characters) => characters.isEmpty
-                  ? HomeEmptyState(isFiltered: state.searchQuery != null || state.statusFilter != null || state.speciesFilter != null)
+                  ? HomeEmptyState(
+                      searchQuery: state.searchQuery,
+                      statusFilter: state.statusFilter,
+                      speciesFilter: state.speciesFilter,
+                    )
                   : CharacterGrid(
                       characters: characters,
                       scrollController: scrollController,
@@ -89,11 +93,7 @@ class HomeScreen extends HookConsumerWidget {
                       isLoadingMore: state.isLoadingMore,
                       onToggleSelection: (c) => _toggleSelection(selectedCharacters, c),
                     ),
-              loading: () => Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+              loading: () => const HomeLoadingState(),
               error: (err, stack) => HomeErrorState(onRetry: () => notifier.fetchInitial()),
             ),
           ),
