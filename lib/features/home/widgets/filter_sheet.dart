@@ -40,17 +40,8 @@ class _FilterSheetState extends State<FilterSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : AppColors.textPrimary,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
               Container(
                 width: 40.w,
                 height: 4.h,
@@ -130,8 +121,8 @@ class _FilterSheetState extends State<FilterSheet> {
               color: isSelected
                   ? AppColors.secondary.withValues(alpha: 0.1)
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : AppColors.background),
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : AppColors.background),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: isSelected

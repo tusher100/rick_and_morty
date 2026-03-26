@@ -81,19 +81,20 @@ class RickAndMortyAppBar extends ConsumerWidget implements PreferredSizeWidget {
       );
     }
 
+    final canPop = Navigator.canPop(context);
+
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0.5,
-      centerTitle: title != null && title!.length > 15,
-      leading: _buildLeading(context, false),
+      centerTitle: title != null && title!.length > 15 ? true : false,
+      leading: canPop ? _buildLeading(context, false) : null,
       title: AppText.h2(title ?? character?.name ?? 'Rick & Morty'),
       actions: allActions,
     );
   }
 
-  Widget _buildLeading(BuildContext context, bool withBackground) {
-    final canPop = Navigator.canPop(context);
-    if (!canPop) return const SizedBox.shrink();
+  Widget? _buildLeading(BuildContext context, bool withBackground) {
+    if (!Navigator.canPop(context)) return null;
 
     final backButton = BackButton(
       color: Theme.of(context).brightness == Brightness.dark
