@@ -113,17 +113,27 @@ class SqfliteHelper {
   }
 
   Future<void> toggleFavorite(Character character) async {
+    final isFav = await isFavorite(character.id);
+    if (isFav) {
+      await _deleteFromFavorites(character.id);
+    } else {
+      await _addToFavorites(character);
+    }
+  }
+
+  Future<void> setFavorite(Character character, bool isFav) async {
+    if (isFav) {
+      await _addToFavorites(character);
+    } else {
+      await _deleteFromFavorites(character.id);
+    }
+  }
+
+  Future<void> _addToFavorites(Character character) async {
     final db = await instance.database;
-    final id = character.id;
-
-    final result = await db.query(
+    await db.insert(
       'favorites',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-
-    if (result.isEmpty) {
-      await db.insert('favorites', {
+      {
         'id': character.id,
         'name': character.name,
         'status': character.status,
@@ -134,14 +144,14 @@ class SqfliteHelper {
         'locationName': character.locationName,
         'image': character.image,
         'createdAt': DateTime.now().toIso8601String(),
-      });
-    } else {
-      await db.delete(
-        'favorites',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-    }
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> _deleteFromFavorites(int id) async {
+    final db = await instance.database;
+    await db.delete('favorites', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Character>> getFavorites() async {

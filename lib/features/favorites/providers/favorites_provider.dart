@@ -14,10 +14,20 @@ class FavoritesNotifier extends AsyncNotifier<List<Character>> {
   }
 
   Future<void> toggleFavorite(Character character) async {
-    // Optimistic UI update or just reload
     state = const AsyncLoading();
     try {
       await SqfliteHelper.instance.toggleFavorite(character);
+      final favorites = await _loadFavorites();
+      state = AsyncData(favorites);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
+
+  Future<void> setFavorite(Character character, bool isFav) async {
+    state = const AsyncLoading();
+    try {
+      await SqfliteHelper.instance.setFavorite(character, isFav);
       final favorites = await _loadFavorites();
       state = AsyncData(favorites);
     } catch (e, st) {

@@ -11,12 +11,16 @@ class CharacterListState {
   final bool hasMore;
   final bool isLoadingMore;
   final String? searchQuery;
+  final String? statusFilter;
+  final String? speciesFilter;
 
   CharacterListState({
     required this.characters,
     this.hasMore = true,
     this.isLoadingMore = false,
     this.searchQuery,
+    this.statusFilter,
+    this.speciesFilter,
   });
 
   CharacterListState copyWith({
@@ -24,13 +28,19 @@ class CharacterListState {
     bool? hasMore,
     bool? isLoadingMore,
     String? searchQuery,
+    String? statusFilter,
+    String? speciesFilter,
     bool clearSearch = false,
+    bool clearStatus = false,
+    bool clearSpecies = false,
   }) {
     return CharacterListState(
       characters: characters ?? this.characters,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       searchQuery: clearSearch ? null : (searchQuery ?? this.searchQuery),
+      statusFilter: clearStatus ? null : (statusFilter ?? this.statusFilter),
+      speciesFilter: clearSpecies ? null : (speciesFilter ?? this.speciesFilter),
     );
   }
 }
@@ -48,7 +58,12 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
   Future<void> fetchInitial() async {
     state = state.copyWith(characters: const AsyncValue.loading());
     try {
-      final fetchedData = await _fetchCharactersData(1, state.searchQuery);
+      final fetchedData = await _fetchCharactersData(
+        1, 
+        state.searchQuery, 
+        state.statusFilter, 
+        state.speciesFilter
+      );
       _currentPage = 1;
       state = state.copyWith(
         characters: AsyncValue.data(fetchedData.characters),
@@ -67,13 +82,35 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     await fetchInitial();
   }
 
+  Future<void> setFilters({String? status, String? species, bool clearAll = false}) async {
+    if (clearAll) {
+      state = state.copyWith(
+        clearStatus: true,
+        clearSpecies: true,
+      );
+    } else {
+      state = state.copyWith(
+        statusFilter: status,
+        speciesFilter: species,
+        clearStatus: status == null,
+        clearSpecies: species == null,
+      );
+    }
+    await fetchInitial();
+  }
+
   Future<void> fetchNextPage() async {
     if (state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
     try {
       final nextPage = _currentPage + 1;
-      final fetchedData = await _fetchCharactersData(nextPage, state.searchQuery);
+      final fetchedData = await _fetchCharactersData(
+        nextPage, 
+        state.searchQuery,
+        state.statusFilter,
+        state.speciesFilter
+      );
 
       final currentValue = state.characters.asData?.value ?? [];
       final existingIds = currentValue.map((c) => c.id).toSet();
@@ -90,15 +127,25 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
     }
   }
 
-  Future<({List<Character> characters, bool hasMore})> _fetchCharactersData(int page, String? name) async {
+  Future<({List<Character> characters, bool hasMore})> _fetchCharactersData(
+    int page, 
+    String? name,
+    String? status,
+    String? species,
+  ) async {
     final apiClient = ref.read(apiClientProvider);
     try {
-      final data = await apiClient.fetchCharacters(page: page, name: name);
+      final data = await apiClient.fetchCharacters(
+        page: page, 
+        name: name,
+        status: status,
+        species: species,
+      );
       final List results = data['results'];
       final characters = results.map((json) => Character.fromJson(json)).toList();
 
-      // Only cache full list results, not filtered results (to avoid cache pollution or deal with it later)
-      if (name == null || name.isEmpty) {
+      // Only cache full list results (no filters)
+      if (name == null && status == null && species == null) {
         await SqfliteHelper.instance.saveCharacters(characters, page);
       }
 
@@ -107,8 +154,8 @@ class CharacterListNotifier extends Notifier<CharacterListState> {
         hasMore: data['info']['next'] != null,
       );
     } catch (e) {
-      // For search, we might not have cache. For full list, we do.
-      if (name == null || name.isEmpty) {
+      // For filtered results, we don't have deep cache logic for page combinations yet
+      if (name == null && status == null && species == null) {
         final cachedCharacters = await SqfliteHelper.instance.getCachedCharacters(page: page);
         if (cachedCharacters.isNotEmpty) {
           return (

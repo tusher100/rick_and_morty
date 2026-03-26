@@ -87,9 +87,10 @@ class AppText extends StatelessWidget {
         fontFamily: 'Plus Jakarta Sans',
       );
 
-  factory AppText.bodySmall(String text, {Color? color, TextAlign? textAlign}) => AppText(
+  factory AppText.bodySmall(String text, {Color? color, TextAlign? textAlign, FontWeight? fontWeight}) => AppText(
         text: text,
         fontSize: 12,
+        fontWeight: fontWeight,
         color: color,
         textAlign: textAlign,
         fontFamily: 'Plus Jakarta Sans',
