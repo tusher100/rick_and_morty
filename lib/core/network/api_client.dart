@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:rickandmorty/core/utils/app_constants.dart';
 
 class ApiClient {
-  final String _baseUrl = 'https://rickandmortyapi.com/api/';
+  String get _baseUrl => dotenv.get(AppConstants.envBaseUrl);
 
   Future<Map<String, dynamic>> fetchCharacters({
     int page = 1, 

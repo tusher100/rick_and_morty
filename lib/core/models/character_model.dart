@@ -9,7 +9,7 @@ class Character {
   final String locationName;
   final String image;
   final bool isFavorite;
-
+  
   Character({
     required this.id,
     required this.name,

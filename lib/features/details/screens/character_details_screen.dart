@@ -54,7 +54,9 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                 leading: Padding(
                   padding: EdgeInsets.all(8.w),
                   child: CircleAvatar(
-                    backgroundColor: AppColors.cardBackground.withValues(alpha: 0.5),
+                    backgroundColor: AppColors.cardBackground.withValues(
+                      alpha: 0.5,
+                    ),
                     child: BackButton(color: AppColors.textPrimary),
                   ),
                 ),
@@ -88,12 +90,18 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                           ),
                           IconButton(
                             icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: isFavorite ? AppColors.danger : AppColors.textTertiary,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite
+                                  ? AppColors.danger
+                                  : AppColors.textTertiary,
                               size: 30.w,
                             ),
                             onPressed: () {
-                              ref.read(favoritesProvider.notifier).toggleFavorite(character);
+                              ref
+                                  .read(favoritesProvider.notifier)
+                                  .toggleFavorite(character);
                             },
                           ),
                         ],
@@ -105,24 +113,35 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                       SizedBox(height: 24.h),
                       const SectionTitle(title: 'Location details'),
                       SizedBox(height: 12.h),
-                      _buildLocationInfo('Origin', character.originName, Icons.public),
-                      SizedBox(height: 12.h),
-                      _buildLocationInfo('Current Location', character.locationName, Icons.location_on),
-                      
-                      SizedBox(height: 40.h),
-                      AppButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditCharacterScreen(character: character),
-                            ),
-                          );
-                        },
-                        icon: Icons.edit_outlined,
-                        label: 'Edit Character',
+                      _buildLocationInfo(
+                        'Origin',
+                        character.originName,
+                        Icons.public,
                       ),
-                      SizedBox(height: 100.h), 
+                      SizedBox(height: 12.h),
+                      _buildLocationInfo(
+                        'Current Location',
+                        character.locationName,
+                        Icons.location_on,
+                      ),
+
+                      SizedBox(height: 40.h),
+                      Center(
+                        child: AppButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditCharacterScreen(character: character),
+                              ),
+                            );
+                          },
+                          icon: Icons.edit_outlined,
+                          label: 'Edit Character',
+                        ),
+                      ),
+                      SizedBox(height: 100.h),
                     ],
                   ),
                 ),
@@ -132,14 +151,13 @@ class CharacterDetailsScreen extends HookConsumerWidget {
         );
       },
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       ),
       error: (e, st) => Scaffold(
         body: Center(
-          child: AppText.bodyMedium(
-            'Error: $e',
-            color: AppColors.danger,
-          ),
+          child: AppText.bodyMedium('Error: $e', color: AppColors.danger),
         ),
       ),
     );
@@ -157,7 +175,11 @@ class CharacterDetailsScreen extends HookConsumerWidget {
         children: [
           _buildGridItem('Gender', character.gender, Icons.person_outline),
           _buildDivider(),
-          _buildGridItem('Type', character.type.isEmpty ? 'Unknown' : character.type, Icons.category),
+          _buildGridItem(
+            'Type',
+            character.type.isEmpty ? 'Unknown' : character.type,
+            Icons.category,
+          ),
         ],
       ),
     );
@@ -176,11 +198,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
   }
 
   Widget _buildDivider() {
-    return Container(
-      height: 40.h,
-      width: 1,
-      color: AppColors.divider,
-    );
+    return Container(height: 40.h, width: 1, color: AppColors.divider);
   }
 
   Widget _buildLocationInfo(String label, String value, IconData icon) {
@@ -205,10 +223,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText.bodySmall(label),
-                AppText.bodyMedium(value),
-              ],
+              children: [AppText.bodySmall(label), AppText.bodyMedium(value)],
             ),
           ),
         ],
