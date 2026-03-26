@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rickandmorty/core/models/character_model.dart';
 import 'package:rickandmorty/core/widgets/app_card.dart';
 import 'package:rickandmorty/core/widgets/status_indicator.dart';
-import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
 import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
 import 'package:rickandmorty/core/utils/app_colors.dart';
 import 'package:rickandmorty/core/widgets/app_text.dart';
@@ -20,7 +19,6 @@ class CharacterCard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retryKey = useState(0);
-    final isFavorite = ref.watch(isFavoriteProvider(character.id));
     final localEdits = ref.watch(characterEditProvider(character.id));
 
     final displayCharacter = character.mergeWithEdits(localEdits);
@@ -87,25 +85,6 @@ class CharacterCard extends HookConsumerWidget {
                           );
                         },
                       ),
-                      if (isFavorite)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppColors.cardBackground.withValues(
-                                alpha: 0.8,
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.favorite,
-                              color: AppColors.danger,
-                              size: 16.w,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
