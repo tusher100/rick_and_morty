@@ -4,8 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rickandmorty/features/home/providers/home_provider.dart';
 import 'package:rickandmorty/features/home/widgets/character_card.dart';
+import 'package:rickandmorty/core/widgets/app_button.dart';
 import 'package:rickandmorty/features/details/screens/character_details_screen.dart';
 import 'package:rickandmorty/features/favorites/screens/favorites_screen.dart';
+import 'package:rickandmorty/core/utils/app_colors.dart';
+import 'package:rickandmorty/core/widgets/app_text.dart';
 
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
@@ -28,25 +31,17 @@ class HomeScreen extends HookConsumerWidget {
     }, [scrollController]);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(
-          'Rick & Morty',
-          style: TextStyle(
-            fontSize: 22.sp,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
+        title: AppText.h2('Rick & Morty'),
+        backgroundColor: AppColors.cardBackground,
         centerTitle: false,
         elevation: 0.5,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 12.w),
             child: IconButton(
-              icon: Icon(Icons.favorite_outline, size: 24.w, color: Colors.black87),
+              icon: Icon(Icons.favorite_outline, size: 24.w, color: AppColors.textPrimary),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -63,7 +58,7 @@ class HomeScreen extends HookConsumerWidget {
             return _buildEmptyState();
           }
           return RefreshIndicator(
-            color: Colors.black87,
+            color: AppColors.textPrimary,
             onRefresh: () => ref.read(characterListProvider.notifier).fetchInitial(),
             child: CustomScrollView(
               controller: scrollController,
@@ -107,7 +102,7 @@ class HomeScreen extends HookConsumerWidget {
                       child: state.isLoadingMore
                           ? const Center(
                               child: CircularProgressIndicator(
-                                color: Colors.black87,
+                                color: AppColors.textPrimary,
                                 strokeWidth: 3,
                               ),
                             )
@@ -119,7 +114,7 @@ class HomeScreen extends HookConsumerWidget {
           );
         },
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Colors.black87),
+          child: CircularProgressIndicator(color: AppColors.textPrimary),
         ),
         error: (err, stack) => _buildErrorState(ref, err),
       ),
@@ -133,16 +128,12 @@ class HomeScreen extends HookConsumerWidget {
         children: [
           Opacity(
             opacity: 0.5,
-            child: Icon(Icons.search_off, size: 80.w),
+            child: Icon(Icons.search_off, size: 80.w, color: AppColors.textSecondary),
           ),
           SizedBox(height: 16.h),
-          Text(
+          AppText.h3(
             'No characters found',
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
+            color: AppColors.textSecondary,
           ),
         ],
       ),
@@ -159,39 +150,22 @@ class HomeScreen extends HookConsumerWidget {
             Container(
               padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
-                color: Colors.red[50],
+                color: AppColors.danger.withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.error_outline, size: 50.w, color: Colors.red[400]),
+              child: Icon(Icons.error_outline, size: 50.w, color: AppColors.danger),
             ),
             SizedBox(height: 24.h),
-            Text(
-              'Connection Error',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            AppText.h2('Connection Error'),
             SizedBox(height: 8.h),
-            Text(
+            AppText.bodySmall(
               'We had trouble fetching the character data. Please check your internet connection and try again.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
             ),
             SizedBox(height: 32.h),
-            ElevatedButton(
+            AppButton(
               onPressed: () => ref.read(characterListProvider.notifier).fetchInitial(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black87,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 0,
-              ),
-              child: Text('Retry', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+              label: 'Retry',
             ),
           ],
         ),

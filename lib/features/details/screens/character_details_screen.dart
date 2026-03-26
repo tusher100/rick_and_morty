@@ -2,10 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rickandmorty/core/widgets/app_button.dart';
+import 'package:rickandmorty/core/widgets/section_title.dart';
+import 'package:rickandmorty/core/widgets/status_indicator.dart';
 import 'package:rickandmorty/features/details/providers/character_details_provider.dart';
 import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
 import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
 import 'package:rickandmorty/features/editing/screens/edit_character_screen.dart';
+import 'package:rickandmorty/core/utils/app_colors.dart';
+import 'package:rickandmorty/core/widgets/app_text.dart';
 
 class CharacterDetailsScreen extends HookConsumerWidget {
   final int characterId;
@@ -21,15 +26,15 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     return characterAsync.when(
       data: (characterData) {
         if (characterData == null) {
-          return const Scaffold(
-            body: Center(child: Text('Character not found')),
+          return Scaffold(
+            body: Center(child: AppText.h3('Character not found')),
           );
         }
 
-        // Merge API/Cache data with local overrides
         final character = characterData.mergeWithEdits(localEdits);
 
         return Scaffold(
+          backgroundColor: AppColors.background,
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -44,13 +49,13 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.cardBackground,
                 elevation: 0,
                 leading: Padding(
                   padding: EdgeInsets.all(8.w),
                   child: CircleAvatar(
-                    backgroundColor: Colors.white.withOpacity(0.5),
-                    child: const BackButton(color: Colors.black87),
+                    backgroundColor: AppColors.withOpacity(AppColors.cardBackground, 0.5),
+                    child: BackButton(color: AppColors.textPrimary),
                   ),
                 ),
               ),
@@ -67,26 +72,14 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  character.name,
-                                  style: TextStyle(
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -1,
-                                  ),
-                                ),
+                                AppText.h1(character.name),
                                 SizedBox(height: 4.h),
                                 Row(
                                   children: [
-                                    _buildStatusIndicator(character.status),
+                                    StatusIndicator(status: character.status),
                                     SizedBox(width: 6.w),
-                                    Text(
+                                    AppText.bodyLarge(
                                       '${character.status} - ${character.species}',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -96,7 +89,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                           IconButton(
                             icon: Icon(
                               isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: isFavorite ? Colors.red : Colors.grey,
+                              color: isFavorite ? AppColors.danger : AppColors.textTertiary,
                               size: 30.w,
                             ),
                             onPressed: () {
@@ -106,43 +99,28 @@ class CharacterDetailsScreen extends HookConsumerWidget {
                         ],
                       ),
                       SizedBox(height: 24.h),
-                      _buildSectionTitle('Information'),
+                      const SectionTitle(title: 'Information'),
                       SizedBox(height: 12.h),
                       _buildInfoGrid(character),
                       SizedBox(height: 24.h),
-                      _buildSectionTitle('Location details'),
+                      const SectionTitle(title: 'Location details'),
                       SizedBox(height: 12.h),
                       _buildLocationInfo('Origin', character.originName, Icons.public),
                       SizedBox(height: 12.h),
                       _buildLocationInfo('Current Location', character.locationName, Icons.location_on),
                       
                       SizedBox(height: 40.h),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55.h,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditCharacterScreen(character: character),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit_outlined),
-                          label: Text(
-                            'Edit Character',
-                            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black87,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.r),
+                      AppButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditCharacterScreen(character: character),
                             ),
-                            elevation: 0,
-                          ),
-                        ),
+                          );
+                        },
+                        icon: Icons.edit_outlined,
+                        label: 'Edit Character',
                       ),
                       SizedBox(height: 100.h), 
                     ],
@@ -154,21 +132,15 @@ class CharacterDetailsScreen extends HookConsumerWidget {
         );
       },
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
       ),
       error: (e, st) => Scaffold(
-        body: Center(child: Text('Error: $e')),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18.sp,
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        body: Center(
+          child: AppText.bodyMedium(
+            'Error: $e',
+            color: AppColors.danger,
+          ),
+        ),
       ),
     );
   }
@@ -177,7 +149,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3F5),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
@@ -196,19 +168,9 @@ class CharacterDetailsScreen extends HookConsumerWidget {
       children: [
         Icon(icon, size: 24.w, color: Colors.blueGrey),
         SizedBox(height: 8.h),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
-        ),
+        AppText.bodySmall(label),
         SizedBox(height: 4.h),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
+        AppText.bodyMedium(value),
       ],
     );
   }
@@ -217,7 +179,7 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     return Container(
       height: 40.h,
       width: 1,
-      color: Colors.grey[300],
+      color: AppColors.divider,
     );
   }
 
@@ -225,68 +187,29 @@ class CharacterDetailsScreen extends HookConsumerWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: const Color(0xFFE7F5FF),
+              color: AppColors.iconBackground,
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(icon, size: 24.w, color: Colors.blue),
+            child: Icon(icon, size: 24.w, color: AppColors.secondary),
           ),
           SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
-                ),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
+                AppText.bodySmall(label),
+                AppText.bodyMedium(value),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusIndicator(String status) {
-    Color color;
-    switch (status.toLowerCase()) {
-      case 'alive':
-        color = const Color(0xFF55CC44);
-        break;
-      case 'dead':
-        color = const Color(0xFFD63D2E);
-        break;
-      default:
-        color = const Color(0xFF9E9E9E);
-    }
-    return Container(
-      width: 10.w,
-      height: 10.w,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 6,
-            spreadRadius: 2,
           ),
         ],
       ),

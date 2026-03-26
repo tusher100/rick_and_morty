@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rickandmorty/features/home/widgets/character_card.dart';
 import 'package:rickandmorty/features/favorites/providers/favorites_provider.dart';
 import 'package:rickandmorty/features/details/screens/character_details_screen.dart';
+import 'package:rickandmorty/core/utils/app_colors.dart';
+import 'package:rickandmorty/core/widgets/app_text.dart';
 
 class FavoritesScreen extends HookConsumerWidget {
   const FavoritesScreen({super.key});
@@ -13,20 +15,12 @@ class FavoritesScreen extends HookConsumerWidget {
     final favoritesState = ref.watch(favoritesProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(
-          'My Favorites',
-          style: TextStyle(
-            fontSize: 22.sp,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
+        title: AppText.h2('My Favorites'),
+        backgroundColor: AppColors.cardBackground,
         elevation: 0.5,
-        leading: const BackButton(color: Colors.black87),
+        leading: BackButton(color: AppColors.textPrimary),
       ),
       body: favoritesState.when(
         data: (favorites) {
@@ -37,21 +31,16 @@ class FavoritesScreen extends HookConsumerWidget {
                 children: [
                   Opacity(
                     opacity: 0.3,
-                    child: Icon(Icons.favorite_border, size: 80.w, color: Colors.grey),
+                    child: Icon(Icons.favorite_border, size: 80.w, color: AppColors.textTertiary),
                   ),
                   SizedBox(height: 16.h),
-                  Text(
+                  AppText.h3(
                     'No favorites yet',
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[600],
-                    ),
+                    color: AppColors.textSecondary,
                   ),
                   SizedBox(height: 8.h),
-                  Text(
+                  AppText.bodySmall(
                     'Characters you favorite will appear here.',
-                    style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
                   ),
                 ],
               ),
@@ -87,10 +76,13 @@ class FavoritesScreen extends HookConsumerWidget {
           );
         },
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Colors.black87),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (err, stack) => Center(
-          child: Text('Error loading favorites: $err'),
+          child: AppText.bodyMedium(
+            'Error loading favorites: $err',
+            color: AppColors.danger,
+          ),
         ),
       ),
     );

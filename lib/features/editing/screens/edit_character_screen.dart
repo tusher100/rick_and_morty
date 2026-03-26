@@ -3,7 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rickandmorty/core/models/character_model.dart';
+import 'package:rickandmorty/core/widgets/app_text_field.dart';
 import 'package:rickandmorty/features/editing/providers/local_edits_provider.dart';
+import 'package:rickandmorty/core/utils/app_colors.dart';
+import 'package:rickandmorty/core/widgets/app_text.dart';
 
 class EditCharacterScreen extends HookConsumerWidget {
   final Character character;
@@ -14,7 +17,6 @@ class EditCharacterScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
     
-    // Initialize controllers with current values (either API or previously edited)
     final nameController = useTextEditingController(text: character.name);
     final statusController = useTextEditingController(text: character.status);
     final speciesController = useTextEditingController(text: character.species);
@@ -24,19 +26,12 @@ class EditCharacterScreen extends HookConsumerWidget {
     final locationController = useTextEditingController(text: character.locationName);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.cardBackground,
       appBar: AppBar(
-        title: Text(
-          'Edit Character',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w900,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
+        title: AppText.h2('Edit Character'),
+        backgroundColor: AppColors.cardBackground,
         elevation: 0,
-        leading: const BackButton(color: Colors.black87),
+        leading: BackButton(color: AppColors.textPrimary),
         actions: [
           TextButton(
             onPressed: () async {
@@ -60,13 +55,10 @@ class EditCharacterScreen extends HookConsumerWidget {
                 }
               }
             },
-            child: Text(
+            child: AppText.bodyLarge(
               'Save',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+              color: AppColors.secondary,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -80,13 +72,13 @@ class EditCharacterScreen extends HookConsumerWidget {
             children: [
               _buildImageHeader(),
               SizedBox(height: 24.h),
-              _buildTextField('Name', nameController, Icons.person),
-              _buildTextField('Status', statusController, Icons.info_outline),
-              _buildTextField('Species', speciesController, Icons.fingerprint),
-              _buildTextField('Type', typeController, Icons.category),
-              _buildTextField('Gender', genderController, Icons.wc),
-              _buildTextField('Origin', originController, Icons.public),
-              _buildTextField('Location', locationController, Icons.location_on),
+              AppTextField(label: 'Name', controller: nameController, icon: Icons.person),
+              AppTextField(label: 'Status', controller: statusController, icon: Icons.info_outline),
+              AppTextField(label: 'Species', controller: speciesController, icon: Icons.fingerprint),
+              AppTextField(label: 'Type', controller: typeController, icon: Icons.category),
+              AppTextField(label: 'Gender', controller: genderController, icon: Icons.wc),
+              AppTextField(label: 'Origin', controller: originController, icon: Icons.public),
+              AppTextField(label: 'Location', controller: locationController, icon: Icons.location_on),
               SizedBox(height: 40.h),
             ],
           ),
@@ -107,45 +99,12 @@ class EditCharacterScreen extends HookConsumerWidget {
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: const BoxDecoration(
-              color: Colors.blue,
+              color: AppColors.secondary,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.camera_alt, color: Colors.white, size: 20.w),
+            child: Icon(Icons.camera_alt, color: AppColors.cardBackground, size: 20.w),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 20.h),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: Colors.blueGrey),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: Colors.grey[200]!),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.r),
-            borderSide: BorderSide(color: Colors.blue, width: 2),
-          ),
-          filled: true,
-          fillColor: Colors.grey[50],
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter $label';
-          }
-          return null;
-        },
       ),
     );
   }
